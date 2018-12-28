@@ -15,12 +15,7 @@ public class ClientHandler {
 
     public void start() {
         System.out.println("新客户端接入");
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                doStart();
-            }
-        }).start();
+        new Thread(() -> doStart()).start();
     }
 
     private void doStart() {
@@ -34,10 +29,7 @@ public class ClientHandler {
                     System.out.println("客户端传来消息: " + message);
                     socket.getOutputStream().write(data);
                 }
-
             }
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }

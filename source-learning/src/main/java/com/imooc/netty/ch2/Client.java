@@ -14,25 +14,19 @@ public class Client {
     public static void main(String[] args) throws IOException {
         final Socket socket = new Socket(HOST, PORT);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                System.out.println("客户端启动成功!");
-                while (true) {
-                    try {
-                        String message = "hello world";
-                        System.out.println("客户端发送数据: " + message);
-                        socket.getOutputStream().write(message.getBytes());
-                    } catch (Exception e) {
-                        System.out.println("写数据出错!");
-                    }
-                    sleep();
+        new Thread(() -> {
+            System.out.println("客户端启动成功!");
+            while (true) {
+                try {
+                    String message = "hello world";
+                    System.out.println("客户端发送数据: " + message);
+                    socket.getOutputStream().write(message.getBytes());
+                } catch (Exception e) {
+                    System.out.println("写数据出错!");
                 }
-
-
+                sleep();
             }
         }).start();
-
     }
 
     private static void sleep() {
