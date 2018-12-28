@@ -1,11 +1,13 @@
 package com.imooc;
 
+import com.imooc.netty.WSServer;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
-import com.imooc.netty.WSServer;
-
+/**
+ * Netty 启动
+ */
 @Component
 public class NettyBooter implements ApplicationListener<ContextRefreshedEvent> {
 

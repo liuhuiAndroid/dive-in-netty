@@ -9,7 +9,6 @@ import org.mybatis.generator.config.Configuration;
 import org.mybatis.generator.config.xml.ConfigurationParser;
 import org.mybatis.generator.internal.DefaultShellCallback;
 
-
 public class GeneratorDisplay {
 
 	public void generator() throws Exception{

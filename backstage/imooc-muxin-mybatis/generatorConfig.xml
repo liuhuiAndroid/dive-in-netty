@@ -13,9 +13,9 @@
         </plugin>
 
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://localhost:3306/muxin-dev"
-                        userId="root"
-                        password="root">
+                        connectionURL="jdbc:mysql://118.126.111.144:3306/muxin-dev"
+                        userId="admin"
+                        password="Abc_123456">
         </jdbcConnection>
 
         <!-- 对于生成的pojo所在包 -->
@@ -27,11 +27,9 @@
 		<!-- 配置mapper对应的java映射 -->
         <javaClientGenerator targetPackage="com.imooc.mapper" targetProject="src/main/java" type="XMLMAPPER"/>
 
-
 		<table tableName="users"></table>
 		<table tableName="my_friends"></table>
 		<table tableName="friends_request"></table>
 		<table tableName="chat_msg"></table>
-		 
     </context>
 </generatorConfiguration>
