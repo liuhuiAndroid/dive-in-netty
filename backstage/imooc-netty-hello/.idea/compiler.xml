@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="imooc-netty-hello" target="1.5" />
+      <module name="imooc-netty-hello" target="8" />
     </bytecodeTargetLevel>
   </component>
 </project>
