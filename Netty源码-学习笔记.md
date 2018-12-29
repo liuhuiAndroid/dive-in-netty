@@ -63,6 +63,7 @@ ChannelHandler：Logic
    1. bind()【用户代码入口】
    2. initAndRegister()【初始化并注册】
    3. newChannel()【创建服务端channel】
+   4. init()【初始化服务端channel】
    
    其中，反射创建服务端Channel
    1. newSocket()【通过jdk来创建底层jdk channel】
@@ -74,16 +75,40 @@ ChannelHandler：Logic
 
 2. 初始化服务端Channel
 
+   ```
+   init()【初始化入口】
+   	set ChannelOptions,ChannelAttrs
+   	set ChildOptions,ChildAttrs
+   	config handler【配置服务端pipeline】
+   	add ServerBootstrapAcceptor【添加连接器】
+   ```
+
 3. 注册selector
+
+   ```
+   AbstractChannel.register(channel)【入口】
+   	this.eventLoop = eventLoop【绑定线程】
+   	register0()【实际注册】
+   		doRegister()【调用jdk底层注册】
+   		invokeHandlerAddedIfNeeded()
+   		fireChannelRegistered()【传播事件】
+   ```
 
 4. 端口绑定
 
-## 3-3 服务端Channel的初始化
+   ```
+   AbstractBootstrap.bind()【入口】
+   	doBind()
+   		channel.bind()【jdk底层绑定】
+   	pipeline.fireChannelActive()【传播事件】
+   		HeadContext.readIfIsAutoRead()
+   ```
 
-## 3-4 注册selector
-
-## 3-5 服务端口的绑定
 ## 3-6 服务端启动总结
+
+```
+newChannel() -> init() -> register() -> doBind()
+```
 
 # 第4章 NioEventLoop
 
@@ -208,4 +233,3 @@ ChannelHandler：Logic
 # 第13章 课程总结
 
 13-1 课程回顾和总结
-
