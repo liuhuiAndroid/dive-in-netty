@@ -217,23 +217,77 @@ run() -> for(;;)
 * 任务的聚合
 * 任务的执行
 
-## 4-11 NioEventLoop总结
-
 # 第5章 新连接接入
 
 ## 5-1 新连接接入概述
 
-## 5-2 新连接检测
+#### 问题
 
-## 5-3 NioSocketChannel的创建
+* Netty是在哪里检测有新连接接入的？
+* 新连接是怎样注册到NioEventLoop线程的？
 
-## 5-4 Channel的分类
+#### Netty新连接接入处理逻辑
 
-## 5-5 新连接NioEventLoop的分配和selector注册
+1. 检测新连接
+2. 创建NioSocketChannel
+3. 分配线程及注册selector
+4. 向selector注册读事件
+
+## 5-2 检测新连接
+
+```
+NioEventLoop.processSelectedKey(key,channel)【入口】
+	NioMessageUnsafe.read()
+		NioServerSocketChannel.doReadMessages()【while循环】
+			javaChannel.accept()
+```
+
+```shell
+telnet 127.0.0.1 8888 # 添加新连接
+```
+
+## 5-3 创建NioSocketChannel
+
+```
+new NioSocketChannel(parent,socket)【入口】
+	AbstractNioByteChannel(parent,ch,op_read)
+		configureBlocking(false) & save op
+		create id,unsafe,pipeline 
+	new NioSocketChannelConfig()
+		setTcpNoDelay(true)【禁止Nagle算法】
+```
+
+## 5-4 Netty中Channel的分类
+
+#### Netty中Channel的分类
+
+* NioServerSocketChannel
+* NioSocketChannel
+* Unsafe
+
+#### Channel的层级关系
+
+NioSocketChannel：客户端Channel
+
+NioServerSocketChannel：服务端Channel
+
+![1546174354627](.\pic\5-1.png)
+
+## 5-5 新连接NioEventLoop分配和selector注册
+
+#### 服务端Channel的pipeline构成
+
+```
+Head -> ServerBootstrapAcceptor -> Tail
+```
+
+#### ServerBootstrapAcceptor
+
+* 添加childHandler
+* 设置options和attrs
+* 选择NioEventLoop并注册selector
 
 ## 5-6 NioSocketChannel读事件的注册
-
-## 5-7 新连接接入总结
 
 # 第6章 pipeline
 
@@ -318,3 +372,7 @@ run() -> for(;;)
 # 第13章 课程总结
 
 13-1 课程回顾和总结
+
+# 备注
+
+[闪电侠 Netty博客](https://www.jianshu.com/u/4fdc8c2315e8)
