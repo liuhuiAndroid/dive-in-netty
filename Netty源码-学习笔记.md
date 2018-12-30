@@ -114,25 +114,110 @@ newChannel() -> init() -> register() -> doBind()
 
 ## 4-1 NioEventLoop概述
 
+#### 问题
+
+1. 默认情况下，Netty服务端起多少线程？何时启动？
+
+   默认启动2倍cpu核数的线程
+
+2. Netty是如何解决jdk空轮询bug的？
+
+   通过计数的方式，判断时间
+
+3. Netty如何保证异步串行无锁化？
+
+#### 三个部分
+
+1. NioEventLoop创建
+2. NioEventLoop启动
+3. NioEventLoop执行逻辑
+
 ## 4-2 NioEventLoop创建概述
+
+```
+new NioEventLoopGroup()【线程组，默认2*cpu】
+	new ThreadPerTaskExecutor()【线程创建器】
+	for(){newChild()}【构造NioEventLoop】
+	chooserFactory.newChooser()【线程选择器】
+```
 
 ## 4-3 ThreadPerTaskThread
 
+* 每次执行任务都会创建一个线程实体
+* NioEventLoop线程命名规则nioEventLoop-1-xx
+
 ## 4-4 创建NioEventLoop线程
+
+#### newChild()
+
+*  保存线程执行器ThreadPerTaskExecutor
+* 创建一个MpscQueue
+* 创建一个selector
 
 ## 4-5 创建线程选择器
 
+#### chooserFactory.newChooser()
+
+```
+isPowerOfTwo()【判断是否是2的幂，如2、4、8、16】
+	PowerOfTowEventExecutorChooser【优化】
+		index++&(length-1)
+	GenericEventExecutorChooser【普通】
+		abs(index++%length)
+```
+
 ## 4-6 NioEventLoop的启动
+
+#### NioEventLoop启动触发器
+
+* 服务端启动绑定端口
+* 新连接接入通过chooser绑定一个NioEventLoop
+
+#### NioEventLoop启动
+
+```
+bind() -> execute(task)【入口】
+	startThread() -> doStartThread()【创建线程】
+		ThreadPerTaskExecutor.execute()
+			thread = Thread.currentThread()
+			NioEventLoop.run()【启动】
+```
 
 ## 4-7 NioEventLoop执行概述
 
+#### SingleThreadEventExecutor.this.run()
+
+```
+run() -> for(;;)
+	select()【检查是否有io事件】
+	processSelectedKeys()【处理io事件】
+	runAllTasks【处理异步任务队列】
+```
+
 ## 4-8 检测IO事件
+
+#### select()方法执行逻辑
+
+* deadline以及任务穿插逻辑处理
+* 阻塞式select
+* 避免jdk空轮询的bug
 
 ## 4-9 处理IO事件
 
-## 4-10 -reactor线程任务的执行
+#### processSelectedKeys()执行逻辑
 
-## 4-11 -NioEventLoop总结
+* selected keySet优化
+* processSelectedKeysOptimized()
+
+## 4-10 reactor线程任务的执行
+
+#### runAllTasks()执行逻辑
+
+* task的分类和添加
+* 任务的聚合
+* 任务的执行
+
+## 4-11 NioEventLoop总结
 
 # 第5章 新连接接入
 
