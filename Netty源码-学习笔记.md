@@ -376,3 +376,5 @@ Head -> ServerBootstrapAcceptor -> Tail
 # 备注
 
 [闪电侠 Netty博客](https://www.jianshu.com/u/4fdc8c2315e8)
+
+[Netty 入门与实战](https://juejin.im/book/5b4bc28bf265da0f60130116/section)

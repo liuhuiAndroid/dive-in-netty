@@ -6,6 +6,7 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.string.StringDecoder;
 import io.netty.util.AttributeKey;
 
 /**
@@ -14,12 +15,13 @@ import io.netty.util.AttributeKey;
 public final class Server {
 
     public static void main(String[] args) throws Exception {
+        ServerBootstrap serverBootstrap = new ServerBootstrap();
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();
 
         try {
-            ServerBootstrap b = new ServerBootstrap();
-            b.group(bossGroup, workerGroup)
+            serverBootstrap
+                    .group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .childOption(ChannelOption.TCP_NODELAY, true)
                     .childAttr(AttributeKey.newInstance("childAttr"), "childAttrValue")
@@ -27,13 +29,20 @@ public final class Server {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         public void initChannel(SocketChannel ch) {
-                            ch.pipeline().addLast(new AuthHandler());
+//                            ch.pipeline().addLast(new AuthHandler());
+                            ch.pipeline().addLast(new StringDecoder());
+                            ch.pipeline().addLast(new SimpleChannelInboundHandler<String>() {
+                                @Override
+                                protected void channelRead0(ChannelHandlerContext ctx, String msg) {
+                                    System.out.println(msg);
+                                }
+                            });
                             //..
 
                         }
                     });
 
-            ChannelFuture f = b.bind(8888).sync();
+            ChannelFuture f = serverBootstrap.bind(8888).sync();
 
             f.channel().closeFuture().sync();
         } finally {

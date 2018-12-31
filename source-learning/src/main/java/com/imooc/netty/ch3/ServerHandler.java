@@ -39,7 +39,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     }
 
     private String loadFromDB() {
-        return "hello world!";
+        return "ch2 world!";
     }
 
 }

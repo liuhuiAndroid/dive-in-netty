@@ -15,6 +15,6 @@ public class InBoundHandlerB extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-        ctx.channel().pipeline().fireChannelRead("hello world");
+        ctx.channel().pipeline().fireChannelRead("ch2 world");
     }
 }
