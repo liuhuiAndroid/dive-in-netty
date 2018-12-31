@@ -15,17 +15,25 @@ import io.netty.util.AttributeKey;
 public final class Server {
 
     public static void main(String[] args) throws Exception {
-        ServerBootstrap serverBootstrap = new ServerBootstrap();
+        // 监听端口，accept 新连接的线程组
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+        // 处理每一条连接的数据读写的线程组
         EventLoopGroup workerGroup = new NioEventLoopGroup();
 
         try {
+            // 引导类
+            ServerBootstrap serverBootstrap = new ServerBootstrap();
             serverBootstrap
+                    // 给引导类配置两大线程组
                     .group(bossGroup, workerGroup)
+                    // 指定我们服务端的 IO 模型为NIO
                     .channel(NioServerSocketChannel.class)
                     .childOption(ChannelOption.TCP_NODELAY, true)
+                    // 给服务端的 NioServerSocketChannel 指定一些自定义属性
                     .childAttr(AttributeKey.newInstance("childAttr"), "childAttrValue")
+                    // 指定在服务端启动过程中的一些逻辑
                     .handler(new ServerHandler())
+                    // 指定处理新连接数据的读写处理逻辑
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         public void initChannel(SocketChannel ch) {
